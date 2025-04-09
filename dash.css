@@ -1,0 +1,21 @@
+body{
+    background-color: lightblue;
+}
+
+nav{
+    background-color: black;
+  
+}
+.navbar-text{
+  color: lightblue;
+  font-size-adjust: 1;
+}
+  img{
+    height: 220px;
+  }
+.container{
+    margin-top: 100px;
+}
+.card{
+    box-shadow: 1px 1px 10px 1px;
+}

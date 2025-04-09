@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <script>
+        let mymodule = angular.module("myModuleKuch", []);
+        let myController = mymodule.controller("myControllerKuch", function ($scope, $http) {
+            $scope.jsonAry = [];
+            $scope.cityAry = [];
+            $scope.jobAry = [];
+            $scope.resultAry = [];
+
+
+
+            //--------------------------------
+            $scope.doShowDetails = function (email, index) {
+                // alert(email + "  " + index);
+            }
+            //------------------
+            $scope.doFilter = function () {
+                //alert($scope.selcity)
+            }
+
+            $scope.Fetchcity = function () {
+
+                let url = "/all-cities";
+                $http.get(url).then(fxSuccess, fxFail);
+
+                function fxSuccess(response) {
+                    // alert(JSON.stringify(response.data));
+                    $scope.cityAry = response.data;
+
+                }
+                function fxFail(err) {
+                    alert(err.data);
+                }
+            }
+
+            //for job
+            $scope.Fetchjob = function () {
+                let url = "/all-jobs";
+                $http.get(url).then(fxSuccess, fxFail);
+
+                function fxSuccess(response) {
+                    // alert(JSON.stringify(response.data));
+                    $scope.jobAry = response.data;
+
+                }
+                function fxFail(err) {
+                    alert(err.data);
+                }
+            }
+            $scope.getJobs = function (city, jobs) {
+                // alert(city+" "+jobs);
+                let url;
+                //$http.get(url).then(fxSuccess,fxFail);
+                alert(city + " " + jobs);
+
+                ////console.log(response.data);
+                //  $scope.jsonAryCity=response.data;
+                if ((city == "none" && jobs == "none") || (city == undefined && jobs == undefined)) {
+                    //$scope.doFetchAll();
+
+                    url = "/fetch-jobs-all";
+
+                }
+                else if (city == "none" || city == undefined) {
+                  
+                    url = "/fetch-jobs-job?jobtype=" + jobs;
+
+                }
+                else if (jobs == "none" || jobs == undefined) {
+                  
+                    url = "/fetch-jobs-city?city=" + city;
+
+                } else {
+                    url = "/fetch-jobs-both?city=" + city + "&job=" + jobs;
+
+                }
+                $http.get(url).then(fxSuccess, fxFail);
+
+                function fxSuccess(response) {
+                    
+                 
+                    alert(JSON.stringify(response.data));
+                    $scope.resultAry = response.data;
+              
+                }
+                function fxFail(err) {
+                    alert(err.data);
+                }
+
+            }
+            //get more on card
+
+
+
+            $scope.getmore = function (index) {
+                // alert(index);
+                $scope.cardObj = $scope.resultAry[index];
+            }
+        })
+    </script>
+    <style>
+        .container {
+            margin-top: 5%;
+            height: 500px;
+            display: flex;
+            background-color: lightblue;
+        }
+
+        #ldiv {
+            /* height: 100%; */
+
+            padding: 1%;
+            width: 20%;
+            /* border: 2px solid black; */
+            /* background-color: blue; */
+        }
+
+        .btn {
+            width: 100%;
+            ;
+        }
+
+        #rdiv {
+            background-color: aliceblue;
+            /* border: 2px solid black; */
+            width: 80%;
+
+        }
+
+        nav {
+            background-color: black;
+
+        }
+
+        .navbar-text {
+            color: lightblue;
+            font-size-adjust: 1;
+        }
+        body{
+            background-color: lightblue;  
+        }
+    </style>
+</head>
+
+<body ng-app="myModuleKuch" ng-controller="myControllerKuch" ng-init="Fetchcity();Fetchjob();">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <span class="navbar-text">
+                Find the Records
+            </span>
+        </div>
+    </nav>
+
+    <h1>
+        <center>Found These Result</center>
+    </h1>
+    <div class="container">
+        <div id="ldiv">
+            <div class="row g-1">
+                <div class="col-md-12" style="margin-bottom: 7%;">
+                    <label for="validationDefault04" class="form-label">City</label>
+
+                    <select class="form-select" ng-change="doFilter()" ng-model="jcity">
+                        <option selected value="none">NONE</option>
+                        <option ng-repeat="boro in cityAry" value="{{boro.city}}">{{boro.city}}</option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="row g-1">
+                <div class="col-md-12 coll" style="margin-bottom: 7%;">
+                    <label for="validationDefault04" class="form-label">JOB TYPE</label>
+
+                    <select class="form-select" ng-change="doFilter()" ng-model="jjobs">
+                        <option selected value="none">NONE</option>
+                        <option ng-repeat="boro1 in jobAry" value="{{boro1.jobtitle}}">{{boro1.jobtitle}}</option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="row g-1">
+                <div class="col-md-12" style="margin-bottom: 7%;">
+                    <label for="mle"> Education </label>
+                    <input type="radio" name="gen" id="mle"> YES
+
+                    <input type="radio" name="gen"> NO
+                </div>
+            </div>
+
+            <p>
+                <input type="button" class="btn btn-primary" value="Search" ng-click="getJobs(jcity,jjobs);">
+
+            </p>
+
+        </div>
+        <div id="rdiv">
+            <div class="row">
+                <div class="col-md-3" ng-repeat="obj in resultAry">
+                    <div class="card" style="width:150px,margin-right=10px">
+                        <center> </center>
+                        <div class="card-body">
+                            <h5 class="card-title">{{obj.jobtitle}}</h5>
+                            <p class="card-text">
+                                {{obj.cid}}<br>
+                                {{obj.city}}
+                            </p>
+                            <input type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#fullDetails" value="KNOW MORE" ng-click="getmore($index);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal fade" id="fullDetails" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table>
+                        <tr>
+                            <td>Email:</td>
+                            <td>{{cardObj.cid}}</td>
+                        </tr>
+                        <tr>
+                            <td>JOB-ID:</td>
+                            <td>{{cardObj.jobid}}</td>
+                        </tr>
+                        <tr>
+                            <td>JOB-Title:</td>
+                            <td>{{cardObj.jobtitle}}</td>
+                        </tr>
+                        <tr>
+                            <td>CITY:</td>
+                            <td>{{cardObj.city}}</td>
+                        </tr>
+                        <tr>
+                            <td>ADRESS:</td>
+                            <td>{{cardObj.address}}</td>
+                        </tr>
+                        <tr>
+                            <td>CONTACT:</td>
+                            <td>{{cardObj.contact}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>
